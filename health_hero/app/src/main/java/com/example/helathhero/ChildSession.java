@@ -8,8 +8,11 @@ import com.example.helathhero.model.Status;
 import com.example.helathhero.model.Task;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -44,10 +47,23 @@ public class ChildSession {
         final String childUsername = "Jasio";
         child.setCharacterName(childUsername);
         final String parentUsername = "Mama Jasia";
+        client.connect(context, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                try {
+                    register(childUsername, parentUsername);
+                    subscribeForTastUpdates();
+                    scheduleTaskUpdatePings();
+                } catch (MqttException | JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-        register(childUsername, parentUsername);
-        subscribeForTastUpdates();
-        scheduleTaskUpdatePings();
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                throw new RuntimeException(exception);
+            }
+        });
     }
 
     private void scheduleTaskUpdatePings() {
@@ -99,7 +115,7 @@ public class ChildSession {
         client.publish(CHILD_CREATION_REQUEST_TOPIC, new MqttMessage(registrationRequest.toString().getBytes()));
     }
 
-    public ChildSession getInstance(Context context) {
+    public static ChildSession getInstance(Context context) {
         if (session == null) {
             try {
                 session = new ChildSession(context);
