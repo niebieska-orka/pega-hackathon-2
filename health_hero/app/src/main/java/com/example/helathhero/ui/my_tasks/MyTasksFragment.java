@@ -1,9 +1,11 @@
 package com.example.helathhero.ui.my_tasks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -15,6 +17,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.helathhero.R;
+import com.example.helathhero.ui.task.TaskFragment;
+import com.example.helathhero.ui.task.TaskViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,13 @@ public class MyTasksFragment extends Fragment {
 
         final ListView listView = root.findViewById(R.id.tasks_list);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getActivity(), TaskFragment.class);
+                startActivity(i);
+            }
+        });
         myTasksViewModel.getList().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
             @Override
             public void onChanged(@Nullable List<String> list) {
