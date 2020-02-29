@@ -15,6 +15,7 @@ public class ProfilViewModel extends ViewModel {
     private MutableLiveData<String> name;
     private MutableLiveData<List<String>> recent_arch;
     private MutableLiveData<List<Byte>> avatar;
+    private MutableLiveData<Integer> progress;
 
 
     public ProfilViewModel() {
@@ -32,6 +33,8 @@ public class ProfilViewModel extends ViewModel {
         l.add("arch2");
         l.add("arch3");
         recent_arch.setValue(l);
+        progress = new MutableLiveData<>();
+        progress.setValue(65);
     }
 
     public LiveData<String> getExp() {
@@ -49,4 +52,5 @@ public class ProfilViewModel extends ViewModel {
     public LiveData<String> getName() {
         return name;
     }
+    public LiveData<Integer> getProgress() { return progress; }
 }
