@@ -1,12 +1,10 @@
 package com.example.helathhero.model;
 
-import javafx.concurrent.Task;
-
 import java.util.List;
 
-class Child
+public class Child
 {
-    private Integer id;
+    private String id;
     private String childUsername;
     private String parentUsername;
 
@@ -17,16 +15,6 @@ class Child
 
     private String characterName;
     private byte[] characterImage; // CAN BE CHANGED TO ANOTHER FILE FORMAT
-
-    public void logIn(String childUsername)
-    {
-        //GET DATA FROM SERVER
-    }
-
-    public void register(String childUsername, String parentUsername)
-    {
-        //REGISTER AND GET DATA FROM SERVER
-    }
 
     public void completeTask(int id, byte[] image)
     {

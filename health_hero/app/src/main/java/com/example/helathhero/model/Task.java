@@ -6,7 +6,8 @@ class Task
 {
     private Integer id;
     private Timestamp deadline;
-    private String contents;
+    private String name;
+    private String description;
     private Status status;
     private int XP;
 
@@ -26,10 +27,12 @@ class Task
         return deadline;
     }
 
-    public String getContents()
+    public String getDescription()
     {
-        return contents;
+        return description;
     }
+
+    public String getName(){return name;}
 
     public Status getStatus() {
         return status;

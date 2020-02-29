@@ -10,10 +10,11 @@ class Task
     private Status status;
     private int XP;
 
-    Task(int id, Timestamp deadline, String contents, Type type, int XP)
+    Task(int id, Timestamp deadline, String name, String description, Type type, int XP)
     {
         this.id = id;
-        this.contents = contents;
+        this.name = name;
+        this.description = description;
         this.deadline = deadline;
         this.type = type;
         this.status = Status.TO_DO;
@@ -34,10 +35,12 @@ class Task
         return deadline;
     }
 
-    public String getContents()
+    public String getName()
     {
-        return contents;
+        return name;
     }
+
+    public String getDescription() {return description;}
 
     public Type getType()
     {
