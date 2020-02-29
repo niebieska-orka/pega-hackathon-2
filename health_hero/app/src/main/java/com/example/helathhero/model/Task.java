@@ -2,41 +2,54 @@ package com.example.helathhero.model;
 
 import java.sql.Timestamp;
 
-class Task
-{
+public class Task {
     private String id;
     private Timestamp deadline;
     private String name;
     private String description;
     private Status status;
-    private int XP;
+    private int xp;
 
-    public String getId()
-    {
+    Task(String id, Timestamp deadline, String name, String description, int xp, Status status) {
+        this.id = id;
+        this.deadline = deadline;
+        this.status = Status.TO_DO;
+        this.name = name;
+        this.description = description;
+        this.xp = xp;
+        this.status = status;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void completeTask(byte[] image)
-    {
+    public void completeTask(byte[] image) {
         // TO DO
         // SEND TO SERVER
     }
 
-    public Timestamp getDeadline()
-    {
+    public Timestamp getDeadline() {
         return deadline;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public String getName(){return name;}
+    public String getName() {
+        return name;
+    }
 
     public Status getStatus() {
         return status;
     }
 
-    public int getXP(){return XP;}
+    public synchronized void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public int getXp() {
+        return xp;
+    }
 }
