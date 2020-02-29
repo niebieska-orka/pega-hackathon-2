@@ -13,12 +13,12 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_gallery" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:id="@+id/nav_profil"
+            android:icon="@drawable/account_box_24px"
             android:title="@string/menu_slideshow" />
         <item
             android:id="@+id/nav_my_tasks"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/assignment_24px"
             android:title="@string/menu_my_tasks" />
     </group>
 </menu>
