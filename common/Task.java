@@ -4,7 +4,8 @@ class Task
 {
     private Integer id;
     private Timestamp deadline;
-    private String contents;
+    private String name;
+    private String description;
     private Type type;
     private Status status;
     private int XP;
