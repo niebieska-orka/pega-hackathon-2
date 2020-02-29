@@ -12,7 +12,6 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -52,9 +51,10 @@ public class ChildSession {
             public void onSuccess(IMqttToken asyncActionToken) {
                 try {
                     register(childUsername, parentUsername);
-                    subscribeForTastUpdates();
+                    Thread.sleep(800);
+                    subscribeForStatusUpdates();
                     scheduleTaskUpdatePings();
-                } catch (MqttException | JSONException e) {
+                } catch (MqttException | JSONException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -78,10 +78,10 @@ public class ChildSession {
                     throw new RuntimeException(e);
                 }
             }
-        }, 0, STATUS_PING);
+        }, 800, STATUS_PING);
     }
 
-    private void subscribeForTastUpdates() throws MqttException {
+    private void subscribeForStatusUpdates() throws MqttException {
         client.subscribe(CHILD_STATUS_UPDATE_TOPIC + "/" + child.getId(), 1, new IMqttMessageListener() {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -105,7 +105,7 @@ public class ChildSession {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 JSONObject id = new JSONObject(new String(message.getPayload()));
-                child.setId(id.get("id").toString());
+                child.setId(id.getString("id"));
                 client.unsubscribe(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername);
             }
         });
