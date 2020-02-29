@@ -4,14 +4,14 @@ import java.sql.Timestamp;
 
 class Task
 {
-    private Integer id;
+    private String id;
     private Timestamp deadline;
     private String name;
     private String description;
     private Status status;
     byte[] image;
 
-    public int getId()
+    public String getId()
     {
         return id;
     }

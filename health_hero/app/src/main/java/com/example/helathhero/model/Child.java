@@ -14,11 +14,6 @@ public class Child
     private String characterName;
     private byte[] characterImage; // CAN BE CHANGED TO ANOTHER FILE FORMAT
 
-    public void completeTask(int id, byte[] image)
-    {
-        // SEND REQUEST TO SERVER
-    }
-
     public byte[] getCharacterImage(){return characterImage;}
 
     public String getCharacterName(){return characterName;}
