@@ -14,6 +14,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,6 +29,7 @@ public class Server {
     private static final String PARENT_STATUS_UPDATE_TOPIC = TOPIC_PREFIX + "/parent/status/update";
     private static final String CHILD_ACTION_TO_SERVER_TOPIC = TOPIC_PREFIX + "/action/child/server";
     private static final String PARENT_ACTION_TO_SERVER_TOPIC = TOPIC_PREFIX + "/action/parent/server";
+    private static final String PARENT_ADD_TASK_TOPIC = TOPIC_PREFIX + "/task/add";
     private static final AtomicInteger counter = new AtomicInteger(1);
     private final Map<String, Child> children = new HashMap<>();
     private MqttClient client;
@@ -44,7 +46,7 @@ public class Server {
             taskNode.put("id", task.getId());
             taskNode.put("name", task.getName());
             taskNode.put("description", task.getDescription());
-            taskNode.put("deadline", task.getDeadline().getNanos());
+            taskNode.put("deadline", task.getDeadline().getTime());
             taskNode.put("xp", task.getXp());
             taskNode.put("status", task.getStatus().name());
             taskNode.put("content", Base64.getDecoder().decode(task.getContent()));
@@ -65,10 +67,22 @@ public class Server {
         client.subscribe(CHILD_ACTION_TO_SERVER_TOPIC, 1, this::processChildAction);
         client.subscribe(PARENT_ACTION_TO_SERVER_TOPIC, 1, this::processParentAction);
         client.subscribe(CHILD_CREATION_REQUEST_TOPIC, 1, this::createChild);
+        client.subscribe(PARENT_ADD_TASK_TOPIC, 1, this::addTask);
         while (true) {
             System.out.println("Idling...");
             Thread.sleep(5000);
         }
+    }
+
+    private void addTask(String topic, MqttMessage message) throws IOException {
+        final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
+        String childId = node.get("child_id").asText();
+        String taskId = String.valueOf(counter.incrementAndGet());
+        Timestamp deadline = new Timestamp(node.get("deadline").asLong());
+        String name = node.get("name").asText();
+        String description = node.get("description").asText();
+        int xp = node.get("xp").asInt();
+        children.get(childId).addTask(taskId, deadline, name, description, xp);
     }
 
     private void processParentStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {

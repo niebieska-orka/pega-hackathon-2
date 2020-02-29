@@ -8,7 +8,9 @@ import com.example.helathhero.model.Status;
 import com.example.helathhero.model.Task;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -44,10 +46,24 @@ public class ChildSession {
         final String childUsername = "Jasio";
         child.setCharacterName(childUsername);
         final String parentUsername = "Mama Jasia";
+        client.connect(context, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                try {
+                    register(childUsername, parentUsername);
+                    Thread.sleep(800);
+                    subscribeForStatusUpdates();
+                    scheduleTaskUpdatePings();
+                } catch (MqttException | JSONException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-        register(childUsername, parentUsername);
-        subscribeForTastUpdates();
-        scheduleTaskUpdatePings();
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                throw new RuntimeException(exception);
+            }
+        });
     }
 
     private void scheduleTaskUpdatePings() {
@@ -62,10 +78,10 @@ public class ChildSession {
                     throw new RuntimeException(e);
                 }
             }
-        }, 0, STATUS_PING);
+        }, 800, STATUS_PING);
     }
 
-    private void subscribeForTastUpdates() throws MqttException {
+    private void subscribeForStatusUpdates() throws MqttException {
         client.subscribe(CHILD_STATUS_UPDATE_TOPIC + "/" + child.getId(), 1, new IMqttMessageListener() {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -89,7 +105,7 @@ public class ChildSession {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 JSONObject id = new JSONObject(new String(message.getPayload()));
-                child.setId(id.get("id").toString());
+                child.setId(id.getString("id"));
                 client.unsubscribe(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername);
             }
         });
@@ -99,7 +115,7 @@ public class ChildSession {
         client.publish(CHILD_CREATION_REQUEST_TOPIC, new MqttMessage(registrationRequest.toString().getBytes()));
     }
 
-    public ChildSession getInstance(Context context) {
+    public static ChildSession getInstance(Context context) {
         if (session == null) {
             try {
                 session = new ChildSession(context);
