@@ -41,6 +41,7 @@ public class Server {
         Collection<JsonNode> taskNodes = new ArrayList<>(tasksToSend.size());
         tasksToSend.forEach(task -> {
             ObjectNode taskNode = mapper.createObjectNode();
+            taskNode.put("id", task.getId());
             taskNode.put("name", task.getName());
             taskNode.put("description", task.getDescription());
             taskNode.put("deadline", task.getDeadline().getNanos());
@@ -95,9 +96,10 @@ public class Server {
         String parentUsername = node.get("parent_username").asText();
         Child child = new Child(id, childUsername, parentUsername, new CharacterType());
         children.put(id, child);
+        ObjectNode idNode = new ObjectMapper().createObjectNode();
+        idNode.put("id", id);
         client.publish(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername,
-                new MqttMessage(new ObjectMapper().writeValueAsString(id).getBytes()));
-        System.out.println(new ObjectMapper().writeValueAsString(id));
+                new MqttMessage(new ObjectMapper().writeValueAsString(idNode).getBytes()));
     }
 
     private void processChildStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
