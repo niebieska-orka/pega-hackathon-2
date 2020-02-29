@@ -40,4 +40,10 @@
         android:name="com.example.helathhero.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_my_tasks"
+        android:name="com.example.helathhero.ui.my_tasks.MyTasksFragment"
+        android:label="@string/menu_my_tasks"
+        tools:layout="@layout/fragment_my_tasks" />
 </navigation>
