@@ -1,9 +1,13 @@
 package niebieska.orka.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
+import java.io.IOException;
 
 public class Server {
     private static final String BROKER = "tcp://192.168.43.126:1883";
@@ -31,8 +35,9 @@ public class Server {
         }
     }
 
-    private static void processChildStatusRequest(String topic, MqttMessage message) {
-        System.out.println(topic + ": " + message);
+    private static void processChildStatusRequest(String topic, MqttMessage message) throws IOException {
+        final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
+        System.out.println(node.get("id"));
     }
 
     private static void processChildAction(String topic, MqttMessage message) {
