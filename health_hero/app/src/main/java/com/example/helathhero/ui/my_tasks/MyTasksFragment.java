@@ -17,8 +17,6 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.helathhero.R;
 import com.example.helathhero.TaskActivity;
-import com.example.helathhero.ui.task.TaskFragment;
-import com.example.helathhero.ui.task.TaskViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
