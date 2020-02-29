@@ -1,4 +1,5 @@
-
+common/.idea/misc.xml
+*.xml
 # Created by https://www.gitignore.io/api/java,django,python,android,windows,androidstudio
 # Edit at https://www.gitignore.io/?templates=java,django,python,android,windows,androidstudio
 
@@ -407,3 +408,4 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/java,django,python,android,windows,androidstudio
+
