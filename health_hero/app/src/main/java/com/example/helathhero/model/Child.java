@@ -5,8 +5,6 @@ import java.util.List;
 public class Child
 {
     private String id;
-    private String childUsername;
-    private String parentUsername;
 
     private List<Task> tasks;
 

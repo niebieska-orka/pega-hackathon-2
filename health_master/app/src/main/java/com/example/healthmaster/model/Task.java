@@ -1,4 +1,4 @@
-package com.example.helathhero.model;
+package com.example.healthmaster.model;
 
 import java.sql.Timestamp;
 
@@ -9,15 +9,19 @@ class Task
     private String name;
     private String description;
     private Status status;
-    private int XP;
+    byte[] image;
 
     public int getId()
     {
         return id;
     }
 
-    public void completeTask(byte[] image)
+    public void confirm(boolean accepted)
     {
+        if(accepted)
+            status = Status.COMPLETED;
+        else
+            status = Status.FAILED;
         // TO DO
         // SEND TO SERVER
     }
@@ -37,6 +41,4 @@ class Task
     public Status getStatus() {
         return status;
     }
-
-    public int getXP(){return XP;}
 }
