@@ -7,7 +7,7 @@ class Child
     Integer id;
     String childUsername;
     String parentUsername;
-            
+
     Map<Integer, Task> tasks;
 
     int level;
