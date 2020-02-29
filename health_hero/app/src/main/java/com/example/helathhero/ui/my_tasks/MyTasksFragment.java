@@ -12,11 +12,11 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.helathhero.R;
+import com.example.helathhero.TaskActivity;
 import com.example.helathhero.ui.task.TaskFragment;
 import com.example.helathhero.ui.task.TaskViewModel;
 
@@ -38,7 +38,7 @@ public class MyTasksFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getActivity(), TaskFragment.class);
+                Intent i = new Intent(getActivity(), TaskActivity.class);
                 startActivity(i);
             }
         });
