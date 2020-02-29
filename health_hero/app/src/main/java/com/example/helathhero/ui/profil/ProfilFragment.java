@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,7 +59,13 @@ public class ProfilFragment extends Fragment {
                 name.setText(s);
             }
         });
-
+        final ProgressBar progress = root.findViewById(R.id.profil_progress_bar);
+        profilViewModel.getProgress().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer s) {
+                progress.setProgress(s);
+            }
+        });
         final ListView rec = root.findViewById(R.id.profil_rec_arch);
         profilViewModel.getRec().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
             @Override
