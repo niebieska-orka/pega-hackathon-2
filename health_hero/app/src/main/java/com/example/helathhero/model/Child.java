@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Child
 {
-    private Integer id;
+    private String id;
     private String childUsername;
     private String parentUsername;
 
