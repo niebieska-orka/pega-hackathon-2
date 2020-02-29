@@ -7,8 +7,9 @@ class Task
     private String contents;
     private Type type;
     private Status status;
+    private int XP;
 
-    Task(int id, Timestamp deadline, String contents, Type type)
+    Task(int id, Timestamp deadline, String contents, Type type, int XP)
     {
         this.id = id;
         this.contents = contents;
@@ -45,4 +46,6 @@ class Task
     public Status getStatus() {
         return status;
     }
+
+    public int getXP(){return XP;}
 }

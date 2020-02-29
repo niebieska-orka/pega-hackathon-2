@@ -25,9 +25,10 @@ class Child
         this.characterType = characterType;
     }
 
-    public void addTask(int id, Timestamp deadline, String contenst, Type type)
+
+    public void addTask(int id, Timestamp deadline, String contenst, Type type, int XP)
     {
-        Task task = new Task(id, deadline, contenst, type);
+        Task task = new Task(id, deadline, contenst, type, XP);
         tasks.put(id, task);
     }
 
@@ -35,6 +36,19 @@ class Child
     {
         Task task = tasks.get(id);
         task.setStatus(status);
+        if(status == Status.DONE)getReward(task);
     }
+
+    private void getReward(Task task)
+    {
+        XP = XP + task.getXP();
+        while(XP >= level * 100)
+        {
+            XP = XP - level * 100;
+            level++;
+        }
+    }
+
+    public int getXP(){return }
 
 }
