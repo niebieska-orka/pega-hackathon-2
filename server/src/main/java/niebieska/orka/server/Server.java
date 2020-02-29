@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import niebieska.orka.server.data.CharacterType;
 import niebieska.orka.server.data.Child;
+import niebieska.orka.server.data.Status;
+import niebieska.orka.server.data.Task;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -12,8 +14,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Server {
@@ -36,6 +37,21 @@ public class Server {
         new Server().start();
     }
 
+    private static Collection<JsonNode> convertTasksToJsonNodes(List<Task> tasksToSend, ObjectMapper mapper) {
+        Collection<JsonNode> taskNodes = new ArrayList<>(tasksToSend.size());
+        tasksToSend.forEach(task -> {
+            ObjectNode taskNode = mapper.createObjectNode();
+            taskNode.put("name", task.getName());
+            taskNode.put("description", task.getDescription());
+            taskNode.put("deadline", task.getDeadline().getNanos());
+            taskNode.put("xp", task.getXp());
+            taskNode.put("status", task.getStatus().name());
+            taskNode.put("content", Base64.getDecoder().decode(task.getContent()));
+            taskNodes.add(taskNode);
+        });
+        return taskNodes;
+    }
+
     private void start() throws MqttException, InterruptedException {
         client = new MqttClient(BROKER, "niebieska.orka.health.hero.server", new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
@@ -54,8 +70,22 @@ public class Server {
         }
     }
 
-    private void processParentStatusRequest(String topic, MqttMessage message) {
-        // basically like processChildStatusRequest, just different tasks
+    private void processParentStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
+        final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
+        String id = node.get("id").asText();
+        Child child = children.get(id);
+        if (child == null) {
+            return;
+        }
+        List<Task> tasksToSend = child.getParentUpdate();
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode rootNode = mapper.createObjectNode();
+        Collection<JsonNode> taskNodes = convertTasksToJsonNodes(tasksToSend, mapper);
+        rootNode.putArray("changed_tasks").addAll(taskNodes);
+        rootNode.put("new_xp", child.getXP());
+        rootNode.put("new_level", child.getLevel());
+        client.publish(PARENT_STATUS_UPDATE_TOPIC,
+                new MqttMessage(mapper.writeValueAsString(rootNode).getBytes()));
     }
 
     private void createChild(String topic, MqttMessage message) throws IOException, MqttException {
@@ -69,29 +99,39 @@ public class Server {
                 new MqttMessage(id.getBytes()));
     }
 
-    private void processChildStatusRequest(String topic, MqttMessage message) throws IOException {
+    private void processChildStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
         String id = node.get("id").asText();
         Child child = children.get(id);
         if (child == null) {
             return;
         }
-        // extract tasks that need to be sent
-        // convert them to json
-        // send tasks to child
+        List<Task> tasksToSend = child.getChildUpdateAndUpdateStatus();
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.createObjectNode();
+        ObjectNode rootNode = mapper.createObjectNode();
+        Collection<JsonNode> taskNodes = convertTasksToJsonNodes(tasksToSend, mapper);
+        rootNode.putArray("changed_tasks").addAll(taskNodes);
+        rootNode.put("new_xp", child.getXP());
+        rootNode.put("new_level", child.getLevel());
+        client.publish(CHILD_STATUS_UPDATE_TOPIC,
+                new MqttMessage(mapper.writeValueAsString(rootNode).getBytes()));
     }
 
-    private void processChildAction(String topic, MqttMessage message) {
-        System.out.println(topic + ": " + message);
-        // extract task from request
-        // update task status etc
+    private void processChildAction(String topic, MqttMessage message) throws IOException {
+        final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
+        String taskId = node.get("task_id").asText();
+        String childId = node.get("child_id").asText();
+        String content = node.get("content").asText();
+        children.get(childId).addTaskContent(taskId, Base64.getDecoder().decode(content));
+        children.get(childId).setTaskStatus(taskId, Status.TO_CONFIRM);
     }
 
-    private void processParentAction(String topic, MqttMessage message) {
-        System.out.println(topic + ": " + message);
-        // extract task from request
-        // update task status etc
+    private void processParentAction(String topic, MqttMessage message) throws IOException {
+        final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
+        String taskId = node.get("task_id").asText();
+        String childId = node.get("child_id").asText();
+        boolean isAccepted = node.get("accepted").asBoolean();
+        Child child = children.get(childId);
+        child.setTaskStatus(taskId, isAccepted ? Status.COMPLETED : Status.FAILED);
     }
 }
