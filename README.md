@@ -1,1 +1,1 @@
-# pega-hackathon-2
+pega-hackathon-2
