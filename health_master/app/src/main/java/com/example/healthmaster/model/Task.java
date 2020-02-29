@@ -2,7 +2,7 @@ package com.example.healthmaster.model;
 
 import java.sql.Timestamp;
 
-class Task
+public class Task
 {
     private String id;
     private Timestamp deadline;
@@ -14,16 +14,6 @@ class Task
     public String getId()
     {
         return id;
-    }
-
-    public void confirm(boolean accepted)
-    {
-        if(accepted)
-            status = Status.COMPLETED;
-        else
-            status = Status.FAILED;
-        // TO DO
-        // SEND TO SERVER
     }
 
     public Timestamp getDeadline()
@@ -40,5 +30,9 @@ class Task
 
     public Status getStatus() {
         return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
