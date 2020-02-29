@@ -84,7 +84,7 @@ public class Server {
         rootNode.putArray("changed_tasks").addAll(taskNodes);
         rootNode.put("new_xp", child.getXP());
         rootNode.put("new_level", child.getLevel());
-        client.publish(PARENT_STATUS_UPDATE_TOPIC,
+        client.publish(PARENT_STATUS_UPDATE_TOPIC + "/" + id,
                 new MqttMessage(mapper.writeValueAsString(rootNode).getBytes()));
     }
 
@@ -96,7 +96,8 @@ public class Server {
         Child child = new Child(id, childUsername, parentUsername, new CharacterType());
         children.put(id, child);
         client.publish(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername,
-                new MqttMessage(id.getBytes()));
+                new MqttMessage(new ObjectMapper().writeValueAsString(id).getBytes()));
+        System.out.println(new ObjectMapper().writeValueAsString(id));
     }
 
     private void processChildStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
@@ -113,7 +114,7 @@ public class Server {
         rootNode.putArray("changed_tasks").addAll(taskNodes);
         rootNode.put("new_xp", child.getXP());
         rootNode.put("new_level", child.getLevel());
-        client.publish(CHILD_STATUS_UPDATE_TOPIC,
+        client.publish(CHILD_STATUS_UPDATE_TOPIC + "/" + id,
                 new MqttMessage(mapper.writeValueAsString(rootNode).getBytes()));
     }
 
