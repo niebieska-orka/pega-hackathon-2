@@ -1,4 +1,4 @@
-package com.example.helathhero.model;
+package niebieska.orka.server.data;
 
 import java.sql.Timestamp;
 
@@ -9,47 +9,50 @@ public class Task {
     private String description;
     private Status status;
     private int xp;
+    private byte[] content;
 
-    Task(String id, Timestamp deadline, String name, String description, int xp, Status status) {
+    Task(String id, Timestamp deadline, String name, String description, int xp) {
         this.id = id;
         this.deadline = deadline;
         this.status = Status.TO_DO;
         this.name = name;
         this.description = description;
         this.xp = xp;
-        this.status = status;
     }
 
     public String getId() {
         return id;
     }
 
-    public void completeTask(byte[] image) {
-        // TO DO
-        // SEND TO SERVER
-    }
-
     public Timestamp getDeadline() {
         return deadline;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Status getStatus() {
         return status;
     }
 
-    public synchronized void setStatus(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
     public int getXp() {
         return xp;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
     }
 }
