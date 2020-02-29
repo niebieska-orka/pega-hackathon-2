@@ -40,13 +40,25 @@ class Child
         if(status == Status.COMPLETED)getReward(task);
     }
 
-    public List<Task> getConfirmedTasks()
+    public List<Task> getChildUpdateAndUpdateStatus()
     {
         List<Task> confirmedTasks = new LinkedList<>();
         for (Task task: tasks.values()) {
             if(task.getStatus() == Status.CONFIRMED)
             {
                 task.setStatus(Status.COMPLETED);
+                confirmedTasks.add(task);
+            }
+        }
+        return confirmedTasks;
+    }
+
+    public List<Task> getParentUpdate()
+    {
+        List<Task> confirmedTasks = new LinkedList<>();
+        for (Task task: tasks.values()) {
+            if(task.getStatus() == Status.TO_CONFIRM)
+            {
                 confirmedTasks.add(task);
             }
         }
