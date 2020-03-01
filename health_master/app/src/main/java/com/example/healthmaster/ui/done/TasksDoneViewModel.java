@@ -1,23 +1,23 @@
-package com.example.helathhero.ui.my_tasks;
+package com.example.healthmaster.ui.done;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.helathhero.ChildSession;
-import com.example.helathhero.model.Task;
+import com.example.healthmaster.ParentSession;
+import com.example.healthmaster.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyTasksViewModel extends ViewModel {
+public class TasksDoneViewModel extends ViewModel {
 
     private MutableLiveData<List<String>> mList;
 
-    public MyTasksViewModel() {
+    public TasksDoneViewModel() {
         mList = new MutableLiveData<>();
         List<String> list = new ArrayList<>();
-        for(Task task : ChildSession.getInstance(null).getTasks()) {
+        for (Task task : ParentSession.getInstance(null).getDoneTasks()) {
             list.add(task.getName());
         }
         mList.setValue(list);

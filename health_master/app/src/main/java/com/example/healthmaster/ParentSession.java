@@ -1,6 +1,8 @@
 package com.example.healthmaster;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 import com.example.healthmaster.model.Status;
@@ -18,11 +20,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class ParentSession {
     private static final String BROKER = "tcp://192.168.43.126:1883";
@@ -37,14 +43,24 @@ public class ParentSession {
     private final MqttAndroidClient client;
 
     private final String id;
-    private Map<String, Task> childTasks;
-    private List<Task> exampleTasks;
+    private Map<String, Task> childTasks = new HashMap<>();
+    private List<Task> exampleTasks = new ArrayList<>();
     private Timer timer;
 
     private ParentSession(Context context) throws MqttException {
         this.context = context;
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(context, BROKER, clientId, new MemoryPersistence(), MqttAndroidClient.Ack.AUTO_ACK);
+        exampleTasks.add(new Task(new Timestamp(System.currentTimeMillis() + 100000L), "Watch the air", "Check the current air pollution levels. If the air is too toxic, you need to wear a mask!", 50));
+        exampleTasks.add(new Task(new Timestamp(System.currentTimeMillis() + 100000000L), "Greens are good for you!", "Eat a green vegetable!", 10));
+        Task childTask1 = new Task(new Timestamp(System.currentTimeMillis() + 1000000L), "Eat your carrots", "I prepared them for you with all my love <3", 100);
+        childTask1.setStatus(Status.TO_CONFIRM);
+        childTask1.setId("22334");
+        Task childTask2 = new Task(new Timestamp(System.currentTimeMillis() + 8000000L), "Wear a proper hat", "It's quite cold today. Remember about your hat!", 50);
+        childTask2.setStatus(Status.TO_CONFIRM);
+        childTask2.setId("223345");
+        childTasks.put("22334", childTask1);
+        childTasks.put("223345", childTask2);
         id = "2";
         client.connect(context, new IMqttActionListener() {
             @Override
@@ -130,5 +146,19 @@ public class ParentSession {
         taskNode.put("xp", task.getXp());
 
         client.publish(PARENT_ADD_TASK_TOPIC, new MqttMessage(taskNode.toString().getBytes()));
+    }
+
+    public List<Task> getTaskTemplates() {
+        return this.exampleTasks;
+    }
+
+    public List<Task> getDoneTasks() {
+        List<Task> doneTasks = new ArrayList<>();
+        for (Task task : childTasks.values()) {
+            if (task.getStatus().equals(Status.TO_CONFIRM)) {
+                doneTasks.add(task);
+            }
+        }
+        return doneTasks;
     }
 }

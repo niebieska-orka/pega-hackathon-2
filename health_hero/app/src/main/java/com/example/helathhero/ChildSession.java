@@ -20,7 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -96,28 +98,37 @@ public class ChildSession {
         client.subscribe(CHILD_STATUS_UPDATE_TOPIC + "/" + child.getId(), 1, new IMqttMessageListener() {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
+                System.out.println("Got update!!!" + message.toString());
                 JSONObject statusUpdateNode = new JSONObject(new String(message.getPayload()));
                 JSONArray changedTasksArray = statusUpdateNode.getJSONArray("changed_tasks");
                 for (int i = 0; i < changedTasksArray.length(); i++) {
                     JSONObject taskNode = changedTasksArray.getJSONObject(i);
-                    child.addTask(taskNode.getString("id"),
-                            new Timestamp(taskNode.getLong("deadline")),
-                            taskNode.getString("name"),
-                            taskNode.getString("description"),
-                            taskNode.getInt("xp"),
-                            Status.valueOf(taskNode.getString("status")));
+                    String taskId = taskNode.getString("id");
+                    if (child.getTask(taskId) == null) {
+                        child.addTask(taskId,
+                                new Timestamp(taskNode.getLong("deadline")),
+                                taskNode.getString("name"),
+                                taskNode.getString("description"),
+                                taskNode.getInt("xp"),
+                                Status.valueOf(taskNode.getString("status")));
+                    } else {
+                        child.getTask(taskId).setStatus(Status.valueOf(taskNode.getString("status")));
+                    }
+                    child.setLevel(taskNode.getInt("new_level"));
+                    child.setXp(taskNode.getInt("xp"));
                 }
             }
         });
     }
 
     private void register(final String childUsername, final String parentUsername) throws MqttException, JSONException {
+        System.out.println("Registering...");
         client.subscribe(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername, 1, new IMqttMessageListener() {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 JSONObject id = new JSONObject(new String(message.getPayload()));
-                child.setId("2");//should be id.getString("id"));
-                client.unsubscribe(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername);
+                child.setId(id.getString("id"));
+                System.out.println("Registered! id: " + child.getId());
             }
         });
         JSONObject registrationRequest = new JSONObject();
@@ -126,8 +137,8 @@ public class ChildSession {
         client.publish(CHILD_CREATION_REQUEST_TOPIC, new MqttMessage(registrationRequest.toString().getBytes()));
     }
 
-    public Collection<Task> getTasks() {
-        return child.getTasks();
+    public synchronized List<Task> getTasks() {
+        return new ArrayList<>(child.getTasks());
     }
 
     public Task getTask(String id) {
@@ -141,6 +152,11 @@ public class ChildSession {
         taskUpdateNode.put("child_id", child.getId());
         taskUpdateNode.put("task_id", taskId);
         taskUpdateNode.put("content", Base64.encodeToString(content, Base64.DEFAULT));
+        System.out.println(taskUpdateNode.getString("content"));
         client.publish(CHILD_ACTION_TO_SERVER_TOPIC, new MqttMessage(taskUpdateNode.toString().getBytes()));
+    }
+
+    public Child getChild() {
+        return this.child;
     }
 }
