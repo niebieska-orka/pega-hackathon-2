@@ -59,4 +59,8 @@ public class Task implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
+
+    public byte[] getContent() {
+        return this.image;
+    }
 }

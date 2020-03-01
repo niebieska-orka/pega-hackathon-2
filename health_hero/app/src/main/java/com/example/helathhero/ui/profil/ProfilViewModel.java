@@ -34,9 +34,9 @@ public class ProfilViewModel extends ViewModel {
         name.setValue(child.getCharacterName());
         recent_arch = new MutableLiveData<>();
         List<String> l = new ArrayList<>();
-        l.add("arch1");
-        l.add("arch2");
-        l.add("arch3");
+        l.add("Broccoli Conqueror");
+        l.add("Junior Safe Breather");
+        l.add("Master of Weather Retention");
         recent_arch.setValue(l);
         progress = new MutableLiveData<>();
         progress.setValue(child.getXP());
