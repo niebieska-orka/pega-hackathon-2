@@ -68,6 +68,17 @@ public class ChildSession {
         });
     }
 
+    public static ChildSession getInstance(Context context) {
+        if (session == null) {
+            try {
+                session = new ChildSession(context);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return session;
+    }
+
     private void scheduleTaskUpdatePings() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -124,17 +135,6 @@ public class ChildSession {
         registrationRequest.put("child_username", childUsername);
         registrationRequest.put("parent_username", parentUsername);
         client.publish(CHILD_CREATION_REQUEST_TOPIC, new MqttMessage(registrationRequest.toString().getBytes()));
-    }
-
-    public static ChildSession getInstance(Context context) {
-        if (session == null) {
-            try {
-                session = new ChildSession(context);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return session;
     }
 
     public synchronized List<Task> getTasks() {
