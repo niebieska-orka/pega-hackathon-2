@@ -2,12 +2,13 @@ package com.example.helathhero.model;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Child {
     private String id;
 
-    private Map<String, Task> tasks;
+    private Map<String, Task> tasks = new HashMap<>();
 
     private int level;
     private int XP;
@@ -54,5 +55,13 @@ public class Child {
 
     public synchronized Task getTask(String id) {
         return tasks.get(id);
+    }
+
+    public void setLevel(int newLevel) {
+        this.level = newLevel;
+    }
+
+    public void setXp(int xp) {
+        this.XP = xp;
     }
 }

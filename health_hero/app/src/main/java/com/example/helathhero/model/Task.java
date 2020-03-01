@@ -24,11 +24,6 @@ public class Task {
         return id;
     }
 
-    public void completeTask(byte[] image) {
-        // TO DO
-        // SEND TO SERVER
-    }
-
     public Timestamp getDeadline() {
         return deadline;
     }
