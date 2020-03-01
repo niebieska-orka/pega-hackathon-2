@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.helathhero.ChildSession;
 import com.example.helathhero.R;
 import com.example.helathhero.TaskActivity;
 
@@ -37,6 +38,9 @@ public class MyTasksFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getActivity(), TaskActivity.class);
+                Bundle options = new Bundle();
+                options.putString("task_id", ChildSession.getInstance(getContext()).getTasks().get(position).getId());
+                i.putExtras(options);
                 startActivity(i);
             }
         });
