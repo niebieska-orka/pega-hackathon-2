@@ -67,13 +67,13 @@ public class Server {
         System.out.println("Connecting to broker: " + BROKER);
         client.connect(connOpts);
         System.out.println("Connected");
+        children.put("2", new Child("2", "Jasio", "Mama Jasia", new CharacterType()));
         client.subscribe(CHILD_STATUS_REQUEST_TOPIC, 1, this::processChildStatusRequest);
         client.subscribe(PARENT_STATUS_REQUEST_TOPIC, 1, this::processParentStatusRequest);
         client.subscribe(CHILD_ACTION_TO_SERVER_TOPIC, 1, this::processChildAction);
         client.subscribe(PARENT_ACTION_TO_SERVER_TOPIC, 1, this::processParentAction);
         client.subscribe(CHILD_CREATION_REQUEST_TOPIC, 1, this::createChild);
         client.subscribe(PARENT_ADD_TASK_TOPIC, 1, this::addTask);
-        children.put("2", new Child("2", "Jasio", "Mama Jasia", new CharacterType()));
         while (true) {
             System.out.println("Idling... connected: " + client.isConnected());
             Thread.sleep(5000);

@@ -66,6 +66,17 @@ public class ChildSession {
         });
     }
 
+    public static ChildSession getInstance(Context context) {
+        if (session == null) {
+            try {
+                session = new ChildSession(context);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return session;
+    }
+
     private void scheduleTaskUpdatePings() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -105,7 +116,7 @@ public class ChildSession {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 JSONObject id = new JSONObject(new String(message.getPayload()));
-                child.setId(id.getString("id"));
+                child.setId("2");//should be id.getString("id"));
                 client.unsubscribe(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername);
             }
         });
@@ -113,17 +124,6 @@ public class ChildSession {
         registrationRequest.put("child_username", childUsername);
         registrationRequest.put("parent_username", parentUsername);
         client.publish(CHILD_CREATION_REQUEST_TOPIC, new MqttMessage(registrationRequest.toString().getBytes()));
-    }
-
-    public static ChildSession getInstance(Context context) {
-        if (session == null) {
-            try {
-                session = new ChildSession(context);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return session;
     }
 
     public Collection<Task> getTasks() {
