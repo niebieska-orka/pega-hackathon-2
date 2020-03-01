@@ -13,6 +13,13 @@ public class Task {
         this.xp = xp;
     }
 
+    public Task(Timestamp deadline, String name, String description, int xp) {
+        this.deadline = deadline;
+        this.name = name;
+        this.description = description;
+        this.xp = xp;
+    }
+
     private int xp;
     byte[] image;
 

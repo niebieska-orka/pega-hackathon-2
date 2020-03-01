@@ -19,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -37,14 +39,16 @@ public class ParentSession {
     private final MqttAndroidClient client;
 
     private final String id;
-    private Map<String, Task> childTasks;
-    private List<Task> exampleTasks;
+    private Map<String, Task> childTasks = new HashMap<>();
+    private List<Task> exampleTasks = new ArrayList<>();
     private Timer timer;
 
     private ParentSession(Context context) throws MqttException {
         this.context = context;
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(context, BROKER, clientId, new MemoryPersistence(), MqttAndroidClient.Ack.AUTO_ACK);
+        exampleTasks.add(new Task(new Timestamp(System.currentTimeMillis()+100000L), "Watch the air","Check the current air pollution levels. If the air is too toxic, you need to wear a mask!",50));
+        exampleTasks.add(new Task(new Timestamp(System.currentTimeMillis()+100000000L), "Greens are good for you!","Eat a green vegetable!",10));
         id = "2";
         client.connect(context, new IMqttActionListener() {
             @Override
@@ -130,5 +134,9 @@ public class ParentSession {
         taskNode.put("xp", task.getXp());
 
         client.publish(PARENT_ADD_TASK_TOPIC, new MqttMessage(taskNode.toString().getBytes()));
+    }
+
+    public List<Task> getTaskTemplates() {
+        return this.exampleTasks;
     }
 }
