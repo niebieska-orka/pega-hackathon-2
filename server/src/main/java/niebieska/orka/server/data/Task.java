@@ -49,7 +49,7 @@ public class Task {
     }
 
     public byte[] getContent() {
-        return content;
+        return content == null ? new byte[]{} : content;
     }
 
     public void setContent(byte[] content) {
