@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CreateTask extends Activity {
+public class CreateCustomTask extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class CreateTask extends Activity {
                 EditText deadline = (EditText) findViewById(R.id.task_deadline);
                 EditText xp = (EditText) (EditText) findViewById(R.id.task_xp);
 
-                Task task = new Task(Timestamp.valueOf(deadline.getText().toString()+" 00:00:01"), name.getText().toString(),
+                Task task = new Task(String.valueOf(deadline.getText()) + (String.valueOf(name.getText()) ), Timestamp.valueOf(deadline.getText().toString()+" 00:00:01"), name.getText().toString(),
                         desc.getText().toString(), Integer.parseInt(xp.getText().toString()));
                 task.setStatus(Status.TO_DO);
                 task.setId(String.valueOf(System.nanoTime()));
@@ -49,5 +49,7 @@ public class CreateTask extends Activity {
                 finish();
             }
         });
+
+
     }
 }

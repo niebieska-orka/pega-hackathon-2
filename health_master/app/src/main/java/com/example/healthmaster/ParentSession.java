@@ -51,17 +51,15 @@ public class ParentSession {
         this.context = context;
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(context, BROKER, clientId, new MemoryPersistence(), MqttAndroidClient.Ack.AUTO_ACK);
-        exampleTasks.add(new Task(new Timestamp(System.currentTimeMillis() + 100000L), "Watch the air", "Check the current air pollution levels. If the air is too toxic, you need to wear a mask!", 50));
-        exampleTasks.add(new Task(new Timestamp(System.currentTimeMillis() + 100000000L), "Greens are good for you!", "Eat a green vegetable!", 10));
-        Task childTask1 = new Task(new Timestamp(System.currentTimeMillis() + 1000000L), "Eat your carrots", "I prepared them for you with all my love <3", 100);
+        exampleTasks.add(new Task("1", new Timestamp(System.currentTimeMillis() + 100000L), "Watch the air", "Check the current air pollution levels. If the air is too toxic, you need to wear a mask!", 50));
+        exampleTasks.add(new Task("2", new Timestamp(System.currentTimeMillis() + 100000000L), "Greens are good for you!", "Eat a green vegetable!", 10));
+        Task childTask1 = new Task("3", new Timestamp(System.currentTimeMillis() + 1000000L), "Eat your carrots", "I prepared them for you with all my love <3", 100);
         childTask1.setStatus(Status.TO_CONFIRM);
-        childTask1.setId("22334");
-        Task childTask2 = new Task(new Timestamp(System.currentTimeMillis() + 8000000L), "Wear a proper hat", "It's quite cold today. Remember about your hat!", 50);
+        Task childTask2 = new Task("4", new Timestamp(System.currentTimeMillis() + 8000000L), "Wear a proper hat", "It's quite cold today. Remember about your hat!", 50);
         childTask2.setStatus(Status.TO_CONFIRM);
-        childTask2.setId("223345");
-        childTasks.put("22334", childTask1);
-        childTasks.put("223345", childTask2);
-        id = "2";
+        childTasks.put(childTask1.getId(), childTask1);
+        childTasks.put(childTask2.getId(), childTask2);
+        id = "5";
         client.connect(context, new IMqttActionListener() {
             @Override
             public void onSuccess(IMqttToken asyncActionToken) {
@@ -80,6 +78,7 @@ public class ParentSession {
             }
         });
     }
+
 
     private void subscribeForStatusUpdates() throws MqttException {
         client.subscribe(PARENT_STATUS_UPDATE_TOPIC + "/" + id, 1, new IMqttMessageListener() {
@@ -150,6 +149,15 @@ public class ParentSession {
 
     public List<Task> getTaskTemplates() {
         return this.exampleTasks;
+    }
+
+    public Task getTaskTemplate(String id)
+    {
+        for(Task task: exampleTasks)
+        {
+            if(task.getId().equals(id)) return task;
+        }
+        return exampleTasks.get(0);
     }
 
     public List<Task> getDoneTasks() {

@@ -14,11 +14,20 @@ public class Task implements Serializable {
         this.xp = xp;
     }
 
+    public Task(String id, Timestamp deadline, String name, String description, int xp) {
+        this.id = id;
+        this.deadline = deadline;
+        this.name = name;
+        this.description = description;
+        this.xp = xp;
+    }
+
     public Task(Timestamp deadline, String name, String description, int xp) {
         this.deadline = deadline;
         this.name = name;
         this.description = description;
         this.xp = xp;
+        this.id = String.valueOf(deadline) + name;
     }
 
     private int xp;

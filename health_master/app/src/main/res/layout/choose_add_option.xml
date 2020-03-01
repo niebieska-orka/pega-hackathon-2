@@ -8,22 +8,38 @@
 
     <Button
         android:id="@+id/from_template"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="240dp"
+        android:layout_width="309dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="216dp"
         android:text="From template"
+        android:textColor="#009688"
+        android:textSize="50sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/custom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="376dp"
+        android:layout_width="309dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="464dp"
         android:text="Custom"
+        android:textColor="#009688"
+        android:textSize="50sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="309dp"
+        android:layout_height="100dp"
+        android:fontFamily="cursive"
+        android:text="Create task"
+        android:textAlignment="center"
+        android:textColor="#009688"
+        android:textSize="70sp"
+        tools:layout_editor_absoluteX="60dp"
+        tools:layout_editor_absoluteY="55dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
