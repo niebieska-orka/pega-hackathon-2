@@ -39,9 +39,9 @@ public class Child {
     public List<Task> getChildUpdateAndUpdateStatus() {
         List<Task> confirmedTasks = new LinkedList<>();
         tasks.values().stream()
-                .filter(task -> task.getStatus().equals(Status.CONFIRMED))
+                .filter(task -> !task.getStatus().equals(Status.COMPLETED))
                 .forEach(task -> {
-                    task.setStatus(Status.COMPLETED);
+                    task.setStatus(Status.TO_CONFIRM);
                     confirmedTasks.add(task);
                 });
         return confirmedTasks;

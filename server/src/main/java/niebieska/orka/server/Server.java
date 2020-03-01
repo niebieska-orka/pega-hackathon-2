@@ -49,7 +49,7 @@ public class Server {
             taskNode.put("deadline", task.getDeadline().getTime());
             taskNode.put("xp", task.getXp());
             taskNode.put("status", task.getStatus().name());
-            taskNode.put("content", Base64.getDecoder().decode(task.getContent()));
+            taskNode.put("content", Base64.getEncoder().encode(task.getContent()));
             taskNodes.add(taskNode);
         });
         return taskNodes;
@@ -86,8 +86,10 @@ public class Server {
     }
 
     private void processParentStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
+        System.out.println("processing parent request: " + message.toString());
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
         String id = node.get("id").asText();
+        System.out.println("parent asked! " + id);
         Child child = children.get(id);
         if (child == null) {
             return;
@@ -97,8 +99,6 @@ public class Server {
         ObjectNode rootNode = mapper.createObjectNode();
         Collection<JsonNode> taskNodes = convertTasksToJsonNodes(tasksToSend, mapper);
         rootNode.putArray("changed_tasks").addAll(taskNodes);
-        rootNode.put("new_xp", child.getXP());
-        rootNode.put("new_level", child.getLevel());
         client.publish(PARENT_STATUS_UPDATE_TOPIC + "/" + id,
                 new MqttMessage(mapper.writeValueAsString(rootNode).getBytes()));
     }
@@ -112,11 +112,18 @@ public class Server {
         children.put(id, child);
         ObjectNode idNode = new ObjectMapper().createObjectNode();
         idNode.put("id", id);
+        System.out.println(new ObjectMapper().writeValueAsString(idNode));
+        child.addTask(String.valueOf(counter.incrementAndGet()), new Timestamp(1583004706019L), "Eat a carrot", "Every healthy hero knows that carrots let you see in the dark! Harness the power of the shadows!!!!", 20);
+        child.addTask(String.valueOf(counter.incrementAndGet()), new Timestamp(1583014706019L), "Wear a hat", "It's cold. Can you imagine a ninja that sneezes and gives away their position? Well we can't!", 30);
+        String taskId = String.valueOf(counter.incrementAndGet());
+        child.addTask(taskId, new Timestamp(1583034706019L), "Kiss your neighbor's dog", "Sometimes we need to suffer in the name of the basic virus immunity. So go and kiss that filthy dog!", 100);
+        child.setTaskStatus(taskId, Status.COMPLETED);
         client.publish(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername,
                 new MqttMessage(new ObjectMapper().writeValueAsString(idNode).getBytes()));
     }
 
     private void processChildStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
+        System.out.println("child request! " + new String(message.getPayload()));
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
         String id = node.get("id").asText();
         Child child = children.get(id);
@@ -130,11 +137,13 @@ public class Server {
         rootNode.putArray("changed_tasks").addAll(taskNodes);
         rootNode.put("new_xp", child.getXP());
         rootNode.put("new_level", child.getLevel());
+        System.out.println("topic:" + CHILD_STATUS_UPDATE_TOPIC + "/" + id);
         client.publish(CHILD_STATUS_UPDATE_TOPIC + "/" + id,
                 new MqttMessage(mapper.writeValueAsString(rootNode).getBytes()));
     }
 
     private void processChildAction(String topic, MqttMessage message) throws IOException {
+        System.out.println("child action!" + message.toString());
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
         String taskId = node.get("task_id").asText();
         String childId = node.get("child_id").asText();
@@ -144,6 +153,7 @@ public class Server {
     }
 
     private void processParentAction(String topic, MqttMessage message) throws IOException {
+        System.out.println("parent action!" + message.toString());
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
         String taskId = node.get("task_id").asText();
         String childId = node.get("child_id").asText();
