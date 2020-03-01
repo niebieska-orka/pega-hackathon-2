@@ -44,7 +44,7 @@ public class MyTasksFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<String> list) {
                 ArrayAdapter<String> arrayAdapter =
-                        new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, list);
+                        new ArrayAdapter<>(getActivity(),R.layout.list_view_whatever, list);
 
                 listView.setAdapter(arrayAdapter);
             }

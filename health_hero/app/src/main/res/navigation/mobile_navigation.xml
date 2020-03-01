@@ -36,10 +36,10 @@
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.helathhero.ui.slideshow.SlideshowFragment"
+        android:id="@+id/nav_profil"
+        android:name="com.example.helathhero.ui.profil.ProfilFragment"
         android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_profil" />
 
     <fragment
         android:id="@+id/nav_my_tasks"
