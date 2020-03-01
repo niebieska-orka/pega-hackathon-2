@@ -11,11 +11,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="128dp"
         android:layout_marginTop="304dp"
+        android:layout_marginEnd="128dp"
         android:fontFamily="cursive"
         android:text="Task Deadline"
         android:textAlignment="center"
         android:textColor="#009688"
         android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,11 +27,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="144dp"
         android:layout_marginTop="176dp"
+        android:layout_marginEnd="144dp"
         android:fontFamily="cursive"
         android:text="Task XP"
         android:textAlignment="center"
         android:textColor="#009688"
         android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,11 +43,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
         android:layout_marginTop="220dp"
+        android:layout_marginEnd="135dp"
         android:ems="10"
         android:fontFamily="cursive"
         android:inputType="number"
         android:textAlignment="center"
         android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,6 +63,7 @@
         android:ems="10"
         android:fontFamily="cursive"
         android:inputType="textPersonName"
+        android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,25 +75,29 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="480dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:textAlignment="center"
         android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/task_deadline"
-        android:layout_width="329dp"
+        android:layout_width="189dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="344dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="364dp"
+        android:layout_marginEnd="108dp"
         android:ems="10"
         android:fontFamily="cursive"
         android:inputType="date"
         android:textAlignment="center"
         android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -95,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="132dp"
         android:layout_marginTop="28dp"
-        android:layout_marginEnd="133dp"
+        android:layout_marginEnd="132dp"
         android:fontFamily="cursive"
         android:text="Task Name"
         android:textColor="#009688"
@@ -110,11 +121,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="124dp"
         android:layout_marginTop="436dp"
+        android:layout_marginEnd="124dp"
         android:fontFamily="cursive"
         android:text="Task Description"
         android:textAlignment="center"
         android:textColor="#009688"
         android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

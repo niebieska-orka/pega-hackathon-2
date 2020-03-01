@@ -12,9 +12,13 @@
         android:layout_height="200dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="216dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="48dp"
         android:text="From template"
         android:textColor="#009688"
         android:textSize="50sp"
+        app:layout_constraintBottom_toTopOf="@+id/custom"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,9 +28,13 @@
         android:layout_height="200dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="464dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="67dp"
         android:text="Custom"
         android:textColor="#009688"
         android:textSize="50sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,12 +42,18 @@
         android:id="@+id/textView2"
         android:layout_width="309dp"
         android:layout_height="100dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="55dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="61dp"
         android:fontFamily="cursive"
         android:text="Create task"
         android:textAlignment="center"
         android:textColor="#009688"
         android:textSize="70sp"
-        tools:layout_editor_absoluteX="60dp"
-        tools:layout_editor_absoluteY="55dp" />
+        app:layout_constraintBottom_toTopOf="@+id/from_template"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
