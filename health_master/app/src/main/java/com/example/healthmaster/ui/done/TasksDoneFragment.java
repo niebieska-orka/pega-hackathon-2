@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.healthmaster.ConfirmTask;
+import com.example.healthmaster.ParentSession;
 import com.example.healthmaster.R;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class TasksDoneFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getActivity(), ConfirmTask.class);
+                i.putExtra("task", ParentSession.getInstance(getContext()).getDoneTasks().get(position));
                 startActivity(i);
             }
         });
@@ -43,7 +45,7 @@ public class TasksDoneFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<String> list) {
                 ArrayAdapter<String> arrayAdapter =
-                        new ArrayAdapter<>(getActivity(),R.layout.list_view_whatever, list);
+                        new ArrayAdapter<>(getActivity(), R.layout.list_view_whatever, list);
 
                 listView.setAdapter(arrayAdapter);
             }
