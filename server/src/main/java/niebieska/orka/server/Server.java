@@ -35,8 +35,12 @@ public class Server {
     private MqttClient client;
 
     //when sending, add "/{ID}" to topic
-    public static void main(String... args) throws Exception {
-        new Server().start();
+    public static void main(String... args) {
+        try {
+            new Server().start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static Collection<JsonNode> convertTasksToJsonNodes(List<Task> tasksToSend, ObjectMapper mapper) {
@@ -56,9 +60,10 @@ public class Server {
     }
 
     private void start() throws MqttException, InterruptedException {
-        client = new MqttClient(BROKER, "niebieska.orka.health.hero.server", new MemoryPersistence());
+        client = new MqttClient(BROKER, "0", new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
+        connOpts.setAutomaticReconnect(true);
         System.out.println("Connecting to broker: " + BROKER);
         client.connect(connOpts);
         System.out.println("Connected");
@@ -68,14 +73,19 @@ public class Server {
         client.subscribe(PARENT_ACTION_TO_SERVER_TOPIC, 1, this::processParentAction);
         client.subscribe(CHILD_CREATION_REQUEST_TOPIC, 1, this::createChild);
         client.subscribe(PARENT_ADD_TASK_TOPIC, 1, this::addTask);
+        children.put("2", new Child("2", "Jasio", "Mama Jasia", new CharacterType()));
         while (true) {
-            System.out.println("Idling...");
+            System.out.println("Idling... connected: " + client.isConnected());
             Thread.sleep(5000);
         }
     }
 
     private void addTask(String topic, MqttMessage message) throws IOException {
+        System.out.println("adding task! " + message.toString());
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
+        if (node.get("child_id") == null) {
+            return;
+        }
         String childId = node.get("child_id").asText();
         String taskId = String.valueOf(counter.incrementAndGet());
         Timestamp deadline = new Timestamp(node.get("deadline").asLong());
@@ -83,6 +93,7 @@ public class Server {
         String description = node.get("description").asText();
         int xp = node.get("xp").asInt();
         children.get(childId).addTask(taskId, deadline, name, description, xp);
+        System.out.println("Added task for child " + childId);
     }
 
     private void processParentStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
@@ -104,6 +115,7 @@ public class Server {
     }
 
     private void createChild(String topic, MqttMessage message) throws IOException, MqttException {
+        System.out.println("child creation!" + message.toString());
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
         String id = String.valueOf(counter.incrementAndGet());
         String childUsername = node.get("child_username").asText();
@@ -120,14 +132,16 @@ public class Server {
         child.setTaskStatus(taskId, Status.COMPLETED);
         client.publish(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername,
                 new MqttMessage(new ObjectMapper().writeValueAsString(idNode).getBytes()));
+        System.out.println("child created successfully");
     }
 
     private void processChildStatusRequest(String topic, MqttMessage message) throws IOException, MqttException {
-        System.out.println("child request! " + new String(message.getPayload()));
+        System.out.println("child request! " + message.toString());
         final ObjectNode node = new ObjectMapper().readValue(message.getPayload(), ObjectNode.class);
-        String id = node.get("id").asText();
+        String id = node.get("id") != null ? node.get("id").asText() : "";
         Child child = children.get(id);
         if (child == null) {
+            System.out.println("null child :(");
             return;
         }
         List<Task> tasksToSend = child.getChildUpdateAndUpdateStatus();
@@ -140,6 +154,7 @@ public class Server {
         System.out.println("topic:" + CHILD_STATUS_UPDATE_TOPIC + "/" + id);
         client.publish(CHILD_STATUS_UPDATE_TOPIC + "/" + id,
                 new MqttMessage(mapper.writeValueAsString(rootNode).getBytes()));
+        System.out.println("sent tasks!");
     }
 
     private void processChildAction(String topic, MqttMessage message) throws IOException {
