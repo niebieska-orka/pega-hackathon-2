@@ -118,7 +118,6 @@ public class ChildSession {
                 JSONObject id = new JSONObject(new String(message.getPayload()));
                 child.setId(id.getString("id"));
                 System.out.println("Registered! id: " + child.getId());
-                client.unsubscribe(CHILD_CREATION_ANSWER_TOPIC + "/" + childUsername + "/" + parentUsername);
             }
         });
         JSONObject registrationRequest = new JSONObject();
@@ -153,6 +152,7 @@ public class ChildSession {
         taskUpdateNode.put("child_id", child.getId());
         taskUpdateNode.put("task_id", taskId);
         taskUpdateNode.put("content", Base64.encodeToString(content, Base64.DEFAULT));
+        System.out.println(taskUpdateNode.getString("content"));
         client.publish(CHILD_ACTION_TO_SERVER_TOPIC, new MqttMessage(taskUpdateNode.toString().getBytes()));
     }
 
