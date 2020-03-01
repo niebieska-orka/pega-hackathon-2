@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.helathhero.ChildSession;
+import com.example.helathhero.model.Status;
 import com.example.helathhero.model.Task;
 
 import java.util.ArrayList;
@@ -17,8 +18,10 @@ public class MyTasksViewModel extends ViewModel {
     public MyTasksViewModel() {
         mList = new MutableLiveData<>();
         List<String> list = new ArrayList<>();
-        for(Task task : ChildSession.getInstance(null).getTasks()) {
-            list.add(task.getName());
+        for (Task task : ChildSession.getInstance(null).getTasks()) {
+            if (!task.getStatus().equals(Status.TO_CONFIRM)) {
+                list.add(task.getName());
+            }
         }
         mList.setValue(list);
     }

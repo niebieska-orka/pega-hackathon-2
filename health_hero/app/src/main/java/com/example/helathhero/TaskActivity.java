@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.helathhero.model.Status;
 import com.example.helathhero.model.Task;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -23,7 +24,7 @@ public class TaskActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         taskId = getIntent().getExtras().getString("task_id");
-        Task task = ChildSession.getInstance(getApplicationContext()).getTask(taskId);
+        final Task task = ChildSession.getInstance(getApplicationContext()).getTask(taskId);
         setContentView(R.layout.fragment_task);
         TextView header = (TextView) findViewById(R.id.task_header);
         TextView completing_xp = (TextView) findViewById(R.id.task_completing_xp);
@@ -35,6 +36,8 @@ public class TaskActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                 startActivityForResult(intent, 1337);
+                task.setStatus(Status.TO_CONFIRM);
+                finish();
             }
         });
 
