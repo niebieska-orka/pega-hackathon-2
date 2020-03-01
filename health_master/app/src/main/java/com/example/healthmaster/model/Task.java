@@ -1,8 +1,9 @@
 package com.example.healthmaster.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Task {
+public class Task implements Serializable {
     private String id;
     private Timestamp deadline;
     private String name;
@@ -53,5 +54,9 @@ public class Task {
 
     public int getXp() {
         return xp;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
